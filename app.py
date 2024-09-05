@@ -43,11 +43,11 @@ def get_mongodb_client():
     return client
 
 
-if __name__ == "__main__":
-    db_client = get_mongodb_client()
-    vercel_db = db_client["vercel_db"]
-    person_collection = vercel_db["person_collection"]
-    # second_collection = vercel_db["second_collection"]
-    # files = vercel_db.list_collection_names()
-    # print(files)
-    app.run(debug=True)
+
+db_client = get_mongodb_client()
+vercel_db = db_client["vercel_db"]
+person_collection = vercel_db["person_collection"]
+# second_collection = vercel_db["second_collection"]
+# files = vercel_db.list_collection_names()
+# print(files)
+app.run(debug=True)
