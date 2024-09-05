@@ -17,6 +17,7 @@ def submit():
     # Get the name from the form
     message = request.form.get("name")
     if message:
+        print(f"Name entered: {message}")  # Print the name in the console
 
         current_time = datetime.now()
         formatted_time = current_time.strftime("%B %d, %Y, %H:%M:%S")
@@ -26,7 +27,7 @@ def submit():
             "message": message
                }
         print(doc)
-        # person_collection.insert_one(doc)
+        person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
     else:
@@ -38,15 +39,15 @@ def get_mongodb_client():
     password = "1363ArM1"
     connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
     client = MongoClient(connection_string)
-
+    print("Do we fail inside the function?")
     return client
 
 
-
-# db_client = get_mongodb_client()
-# vercel_db = db_client["vercel_db"]
-# person_collection = vercel_db["person_collection"]
-# second_collection = vercel_db["second_collection"]
-# files = vercel_db.list_collection_names()
-# print(files)
-app.run(debug=True)
+if __name__ == "__main__":
+    db_client = get_mongodb_client()
+    vercel_db = db_client["vercel_db"]
+    person_collection = vercel_db["person_collection"]
+    # second_collection = vercel_db["second_collection"]
+    # files = vercel_db.list_collection_names()
+    # print(files)
+    app.run(debug=True)
