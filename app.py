@@ -14,7 +14,6 @@ def get_mongodb_client():
     password = "1363ArM1"
     connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
     client = MongoClient(connection_string)
-    print("Do we fail inside the function?")
     return client
 
 
@@ -41,10 +40,10 @@ def submit():
             "message": message
                }
         print(doc)
-        documents = person_collection.find()
+        # documents = person_collection.find()
 
-        for docc in documents:
-            print(docc)
+        # for docc in documents:
+        #     print(docc)
         # person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
