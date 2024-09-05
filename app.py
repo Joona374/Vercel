@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 import os
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 from datetime import datetime
 import time
 
@@ -9,12 +10,15 @@ import time
 app = Flask(__name__)
 
 def get_mongodb_client():
-    # load_dotenv(find_dotenv())
-    # password = os.environ.get("MONGODB_PWD")
-    password = "1363ArM1"
-    connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
-    client = MongoClient(connection_string)
-    return client
+    try:
+        password = "1363ArM1"  # Replace this with your actual method of getting the password
+        connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
+        client = MongoClient(connection_string, serverSelectionTimeoutMS=5000)  # Timeout after 5 seconds
+        print("MongoDB client initialized.")
+        return client
+    except ConnectionFailure as e:
+        print("Could not connect to MongoDB:", e)
+        return None
 
 db_client = get_mongodb_client()
 vercel_db = db_client["vercel_db"]
