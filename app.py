@@ -27,7 +27,7 @@ def submit():
             "message": message
                }
         print(doc)
-        # person_collection.insert_one(doc)
+        person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
     else:
@@ -44,10 +44,10 @@ def get_mongodb_client():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
     db_client = get_mongodb_client()
     vercel_db = db_client["vercel_db"]
     person_collection = vercel_db["person_collection"]
-    second_collection = vercel_db["second_collection"]
-    files = vercel_db.list_collection_names()
-    print(files)
+    # second_collection = vercel_db["second_collection"]
+    # files = vercel_db.list_collection_names()
+    # print(files)
+    app.run(debug=True)
