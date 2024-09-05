@@ -17,7 +17,6 @@ def submit():
     # Get the name from the form
     message = request.form.get("name")
     if message:
-        print(f"Name entered: {message}")  # Print the name in the console
 
         current_time = datetime.now()
         formatted_time = current_time.strftime("%B %d, %Y, %H:%M:%S")
@@ -39,7 +38,6 @@ def get_mongodb_client():
     password = "1363ArM1"
     connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
     client = MongoClient(connection_string)
-    print("Do we fail inside the function?")
     return client
 
 
