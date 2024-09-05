@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 from datetime import datetime
-
+import time
 
 
 app = Flask(__name__)
@@ -16,6 +16,30 @@ def get_mongodb_client():
     client = MongoClient(connection_string)
     return client
 
+db_client = get_mongodb_client()
+vercel_db = db_client["vercel_db"]
+person_collection = vercel_db["person_collection"]
+
+@app.route("/test")
+def test_mongodb():
+    start_time = time.time()
+    print("Connecting to MongoDB...")
+
+    # Try to get a document from MongoDB
+    try:
+        first_doc = person_collection.find_one()
+        if first_doc:
+            print("First document retrieved:", first_doc)
+        else:
+            print("No documents found.")
+    except Exception as e:
+        print("Error accessing MongoDB:", e)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time to access MongoDB: {elapsed_time} seconds")
+
+    return f"MongoDB connection test completed in {elapsed_time} seconds"
 
 @app.route("/")
 def index():
@@ -23,9 +47,6 @@ def index():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    db_client = get_mongodb_client()
-    vercel_db = db_client["vercel_db"]
-    person_collection = vercel_db["person_collection"]
 
     first_doc = person_collection.find_one()
     
