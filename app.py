@@ -52,13 +52,6 @@ def index():
 @app.route("/submit", methods=["POST"])
 def submit():
 
-    first_doc = person_collection.find_one()
-    
-    if first_doc:
-        print("First document in the collection:", first_doc)
-    else:
-        print("No documents found in the collection.")
-
     # Get the name from the form
     message = request.form.get("name")
     if message:
@@ -72,11 +65,7 @@ def submit():
             "message": message
                }
         print(doc)
-        # documents = person_collection.find()
-
-        # for docc in documents:
-        #     print(docc)
-        # person_collection.insert_one(doc)
+        person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
     else:
