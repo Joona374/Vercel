@@ -27,6 +27,13 @@ def submit():
     vercel_db = db_client["vercel_db"]
     person_collection = vercel_db["person_collection"]
 
+    first_doc = person_collection.find_one()
+    
+    if first_doc:
+        print("First document in the collection:", first_doc)
+    else:
+        print("No documents found in the collection.")
+
     # Get the name from the form
     message = request.form.get("name")
     if message:
