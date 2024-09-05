@@ -4,21 +4,21 @@ from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 from datetime import datetime
 
-print("Is this fine?")
-def get_mongodb_client():
-    # load_dotenv(find_dotenv())
-    password = os.environ.get("MONGODB_PWD")
-    print(password)
-    connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
-    client = MongoClient(connection_string)
-    return client
+# print("Is this fine?")
+# def get_mongodb_client():
+#     # load_dotenv(find_dotenv())
+#     password = os.environ.get("MONGODB_PWD")
+#     print(password)
+#     connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
+#     client = MongoClient(connection_string)
+#     return client
 
-print("How is this?")
-db_client = get_mongodb_client()
-vercel_db = db_client.vercel_db
-person_collection = vercel_db.person_collection
-files = vercel_db.list_collection_names()
-print(files)
+# print("How is this?")
+# db_client = get_mongodb_client()
+# vercel_db = db_client.vercel_db
+# person_collection = vercel_db.person_collection
+# files = vercel_db.list_collection_names()
+# print(files)
 
 app = Flask(__name__)
 
