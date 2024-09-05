@@ -46,7 +46,7 @@ print("Is this fine?")
 db_client = get_mongodb_client()
 vercel_db = db_client["vercel_db"]
 person_collection = vercel_db["person_collection"]
-# files = vercel_db.list_collection_names()
+files = vercel_db.list_collection_names()
 # print(files)
 
 if __name__ == "__main__":
