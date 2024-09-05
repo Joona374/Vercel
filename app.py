@@ -24,26 +24,6 @@ db_client = get_mongodb_client()
 vercel_db = db_client["vercel_db"]
 person_collection = vercel_db["person_collection"]
 
-@app.route("/test")
-def test_mongodb():
-    start_time = time.time()
-    print("Connecting to MongoDB...")
-
-    # Try to get a document from MongoDB
-    try:
-        first_doc = person_collection.find_one()
-        if first_doc:
-            print("First document retrieved:", first_doc)
-        else:
-            print("No documents found.")
-    except Exception as e:
-        print("Error accessing MongoDB:", e)
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Elapsed time to access MongoDB: {elapsed_time} seconds")
-
-    return f"MongoDB connection test completed in {elapsed_time} seconds"
 
 @app.route("/")
 def index():
@@ -51,7 +31,6 @@ def index():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-
     # Get the name from the form
     message = request.form.get("name")
     if message:
@@ -67,9 +46,15 @@ def submit():
         print(doc)
         person_collection.insert_one(doc)
         
-        return f"Muru lähetti viestin: {message}!"  # Send a response to the user
+        return render_template("new_message.html", viesti=message)
     else:
         return "No message provided", 400
+
+@app.route("/messages")
+def display_messages():
+    messages = list(person_collection.find())
+
+    return render_template("messages.html", viestit=messages)
 
 if __name__ == "__main__":
     app.run(debug=True)

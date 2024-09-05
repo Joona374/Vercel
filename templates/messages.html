@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/styles.css" />
+    <title>Messages</title>
+  </head>
+
+  <body>
+    <h1>Messages</h1>
+    <ul>
+      {% for message in viestit %}
+      <li>
+        <strong>Time:</strong> {{ message["time"] }} <br />
+        <strong>Message:</strong> {{ message["message"] }}
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="/">Back to Home</a>
+  </body>
+</html>
