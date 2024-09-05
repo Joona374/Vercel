@@ -11,7 +11,8 @@ app = Flask(__name__)
 
 def get_mongodb_client():
     try:
-        password = "1363ArM1"  # Replace this with your actual method of getting the password
+        load_dotenv(find_dotenv())
+        password = os.environ.get("MONGODB_PWD")
         connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
         client = MongoClient(connection_string, serverSelectionTimeoutMS=5000)  # Timeout after 5 seconds
         print("MongoDB client initialized.")
