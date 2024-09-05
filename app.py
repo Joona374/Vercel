@@ -27,7 +27,7 @@ def submit():
             "message": message
                }
         print(doc)
-        # person_collection.insert_one(doc)
+        person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
     else:
@@ -50,3 +50,4 @@ if __name__ == "__main__":
     person_collection = vercel_db["person_collection"]
     second_collection = vercel_db["second_collection"]
     files = vercel_db.list_collection_names()
+    print(files)
