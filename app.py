@@ -17,9 +17,6 @@ def get_mongodb_client():
     print("Do we fail inside the function?")
     return client
 
-db_client = get_mongodb_client()
-vercel_db = db_client["vercel_db"]
-person_collection = vercel_db["person_collection"]
 
 @app.route("/")
 def index():
@@ -27,6 +24,10 @@ def index():
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    db_client = get_mongodb_client()
+    vercel_db = db_client["vercel_db"]
+    person_collection = vercel_db["person_collection"]
+
     # Get the name from the form
     message = request.form.get("name")
     if message:
