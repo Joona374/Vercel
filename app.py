@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 
 
@@ -27,7 +27,9 @@ person_collection = vercel_db["person_collection"]
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    latest_doc = person_collection.find_one(sort=[("_id", -1)])
+    last_message_time = latest_doc["time"]
+    return render_template("index.html", last_message_time=last_message_time)
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -37,7 +39,8 @@ def submit():
         print(f"Name entered: {message}")  # Print the name in the console
 
         current_time = datetime.now()
-        formatted_time = current_time.strftime("%B %d, %Y, %H:%M:%S")
+        adjusted_time = current_time + timedelta(hours=3)
+        formatted_time = adjusted_time.strftime("%B %d, %Y, %H:%M:%S")
 
         doc = {
             "time": formatted_time,
