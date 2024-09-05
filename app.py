@@ -5,13 +5,6 @@ from pymongo import MongoClient
 from datetime import datetime
 
 
-def get_mongodb_client():
-    # load_dotenv(find_dotenv())
-    # password = os.environ.get("MONGODB_PWD")
-    password = "1363ArM1"
-    connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
-    client = MongoClient(connection_string)
-    return client
 
 app = Flask(__name__)
 
@@ -40,12 +33,21 @@ def submit():
     else:
         return "No message provided", 400
 
+def get_mongodb_client():
+    # load_dotenv(find_dotenv())
+    # password = os.environ.get("MONGODB_PWD")
+    password = "1363ArM1"
+    connection_string = f"mongodb+srv://joona374:{password}@website.fuhd6.mongodb.net/?retryWrites=true&w=majority&appName=Website"
+    client = MongoClient(connection_string)
+    print("Do we fail inside the function?")
+    return client
+
 print("Is this fine?")
 db_client = get_mongodb_client()
-vercel_db = db_client.vercel_db
-person_collection = vercel_db.person_collection
-files = vercel_db.list_collection_names()
-print(files)
+# vercel_db = db_client.vercel_db
+# person_collection = vercel_db.person_collection
+# files = vercel_db.list_collection_names()
+# print(files)
 
 if __name__ == "__main__":
     app.run(debug=True)
