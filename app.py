@@ -27,7 +27,7 @@ def submit():
             "message": message
                }
         print(doc)
-        person_collection.insert_one(doc)
+        # person_collection.insert_one(doc)
         
         return f"Muru lähetti viestin: {message}!"  # Send a response to the user
     else:
