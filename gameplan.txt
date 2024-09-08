@@ -1,0 +1,16 @@
+1. Create lobby
+    1.1 User one connects, send message to server. Server registers that a player is waiting for opponent. They can start and play X.
+    1.2 User two connects, check if somebody is waiting. They go second and play O.
+
+2. Go game
+    2.1 Once both players are connected, use SSE to redirect to game page
+    2.2 Display the 3x3 grid
+    2.3 Tell user 1 its their turn, tell user 2 to wait.
+    GAMELOOP:
+    2.4 User 1 clicks on grid, send POST request to server.
+    2.5 Update gamestate on server.
+    2.6 Check if win or draw. Update info text on page as needed.
+    2.7 SSE new refresh to user2 to fetch new data from temporary memory.
+
+3. Gameover
+    3.1 For now the game can just get stuck on the final state, with the users needing to go back to the /waiting_room path for new game.

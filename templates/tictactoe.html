@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/tic.css" />
+    <title>Tic Tac Toe</title>
+  </head>
+  <body>
+    <h1 id="status">Player X's turn</h1>
+    <div id="game-board">
+      <div class="cell" id="cell-0" onclick="makeMove(0)"></div>
+      <div class="cell" id="cell-1" onclick="makeMove(1)"></div>
+      <div class="cell" id="cell-2" onclick="makeMove(2)"></div>
+      <div class="cell" id="cell-3" onclick="makeMove(3)"></div>
+      <div class="cell" id="cell-4" onclick="makeMove(4)"></div>
+      <div class="cell" id="cell-5" onclick="makeMove(5)"></div>
+      <div class="cell" id="cell-6" onclick="makeMove(6)"></div>
+      <div class="cell" id="cell-7" onclick="makeMove(7)"></div>
+      <div class="cell" id="cell-8" onclick="makeMove(8)"></div>
+    </div>
+
+    <h3 id="player-role">You are playing as: Player {{ player_role }}</h3>
+
+    <button
+      id="reset-button"
+      style="
+        background-color: red;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+      "
+      disabled
+    >
+      Reset Game
+    </button>
+
+    <script src="../static/js/tictac.js"></script>
+
+    <script>
+      // Pass the player role from Jinja to JavaScript
+      const playerRole = "{{ player_role }}"; // This is passed from Flask
+
+      // Update the h3 element to show the player's role
+      document.getElementById(
+        "player-role"
+      ).textContent = `You are playing as: Player ${playerRole}`;
+    </script>
+  </body>
+</html>
