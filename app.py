@@ -311,33 +311,6 @@ def join_waiting_room():
 
 
 
-
-@app.route('/sse')
-def sse():
-    print("Do we fail 1")
-    user_id = session.get('user_id')
-    print("Do we fail 2")
-    def event_stream():
-        print("Do we fail 3")
-        # Continuously check for messages in the user's message queue
-        while True:
-            
-            if user_id in sse_queues:
-                print("Do we fail 4")
-                try:
-                    # Get the next message from the user's queue
-                    message = sse_queues[user_id].get(timeout=10)
-                    yield f"data: {message}\n\n"
-                    print("Do we fail 6")
-                except queue.Empty:
-                    print("Do we fail 7")
-                    # Keep the connection alive by sending a keep-alive message if no message
-                    yield ": keep-alive\n\n"
-    print("Do we fail 5")
-    # Return the event stream response for SSE
-    return Response(event_stream(), content_type='text/event-stream')
-
-
 @app.route('/send_message/<target_user_id>')
 def send_message(target_user_id):
     if target_user_id in sse_queues:
