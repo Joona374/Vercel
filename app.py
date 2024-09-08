@@ -322,9 +322,17 @@ def send_message(target_user_id):
 
     return f"Message sent to user {target_user_id}"
 
+@app.route("/states")
+def give_states():
+    current_states = { "player_x_id": player_x_id,
+    "player_o_id": player_o_id,
+    "player_in_turn": player_in_turn,
+    "game_board": game_board
+    }
 
-
-
+    for id, que in sse_queues.items():
+        current_states[id] = que
+    return jsonify(current_states)
 
 
 if __name__ == "__main__":
