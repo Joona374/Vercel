@@ -192,6 +192,20 @@ def make_move():
     else:
         return jsonify({"success": False, "message": "Ei sinun vuoro!"})
 
+@app.route("/admin/reset", methods=["GET"])
+def admin_reset():
+    global player_x_id, player_o_id, player_in_turn, game_board, sse_queues
+
+    # Reset all game-related global variables
+    player_x_id = None
+    player_o_id = None
+    player_in_turn = "X"
+    game_board = [""] * 9
+    sse_queues = {}
+
+    print("Game state has been reset.")
+    return jsonify({"success": True, "message": "Game state has been reset."})
+
 
 # SSE to send real-time game updates
 @app.route("/game-updates")
