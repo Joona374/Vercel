@@ -330,8 +330,8 @@ def give_states():
     "game_board": game_board
     }
 
-    for id, que in sse_queues.items():
-        current_states[id] = que
+    for id, _ in sse_queues.items():
+        current_states[id] = id
     return jsonify(current_states)
 
 
