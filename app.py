@@ -121,21 +121,28 @@ def check_draw(board):
 
 @app.route("/reset", methods=["POST"])
 def reset_game():
-    global game_board, player_in_turn
+    global game_board, player_in_turn, sse_queues
 
     # Reset the game board and player turn
     game_board = [""] * 9
     player_in_turn = "X"  # Reset to Player X's turn
 
-    # Notify both players via SSE that the game has been reset
-    for queue in sse_queues.values():
-        queue.put({
-            "board": game_board,
-            "next_turn": player_in_turn,
-            "message": "The game has been reset."
-        })
+    # Prepare the reset state
+    game_state = {
+        "board": game_board,
+        "next_turn": player_in_turn,
+        "message": "The game has been reset.",
+        "game_over": False  # Reset the game over flag
+    }
+
+    # Notify both players by updating their queues
+    if player_x_id in sse_queues:
+        sse_queues[player_x_id].put(game_state)
+    if player_o_id in sse_queues:
+        sse_queues[player_o_id].put(game_state)
 
     return jsonify({"success": True})
+
 
 # Handle player moves
 @app.route("/make-move", methods=["POST"])
@@ -144,6 +151,10 @@ def make_move():
     user_id = session.get("user_id")
     data = request.get_json()
     cell_index = data.get("cell")
+
+    # Check if the game is already over
+    if check_winner(game_board) or check_draw(game_board):
+        return jsonify({"success": False, "message": "The game is already over. Please reset the game to start a new one."})
 
     # Check if the cell is already taken
     if game_board[cell_index] != "":
@@ -158,35 +169,41 @@ def make_move():
         # Check for a winner after the move
         winner = check_winner(game_board)
         if winner:
-            # Notify both players of the winner via SSE
-            for queue in sse_queues.values():
-                queue.put({
-                    "board": game_board,
-                    "winner": winner,
-                    "message": f"Player {winner} wins!",
-                    "game_over": True
-                })
+            game_state = {
+                "board": game_board,
+                "winner": winner,
+                "message": f"Player {winner} wins!",
+                "game_over": True
+            }
+
+            # Store the game state so that polling can retrieve it
+            sse_queues[player_x_id].put(game_state)
+            sse_queues[player_o_id].put(game_state)
+
             return jsonify({"success": True, "mark": game_board[cell_index], "message": f"Player {winner} wins this!", "game_over": True})
 
         # Check for a draw
         if check_draw(game_board):
-            # Notify both players of a draw via SSE
-            for queue in sse_queues.values():
-                queue.put({
-                    "board": game_board,
-                    "message": "It's a draw!",
-                    "game_over": True
-                })
+            game_state = {
+                "board": game_board,
+                "message": "It's a draw!",
+                "game_over": True
+            }
+
+            # Store the game state so that polling can retrieve it
+            sse_queues[player_x_id].put(game_state)
+            sse_queues[player_o_id].put(game_state)
+
             return jsonify({"success": True, "mark": game_board[cell_index], "message": "It's a draw!", "game_over": True})
 
         # If no winner and no draw, continue the game
-        # Notify both players of the next turn
-        for queue in sse_queues.values():
-            print(f"Tämä on que: {queue}")
-            queue.put({
-                "board": game_board,
-                "next_turn": player_in_turn
-            })
+        game_state = {
+            "board": game_board,
+            "next_turn": player_in_turn
+        }
+
+        sse_queues[player_x_id].put(game_state)
+        sse_queues[player_o_id].put(game_state)
 
         return jsonify({"success": True, "mark": game_board[cell_index], "next_turn": player_in_turn})
     else:
@@ -206,25 +223,30 @@ def admin_reset():
     print("Game state has been reset.")
     return jsonify({"success": True, "message": "Game state has been reset."})
 
+@app.route("/game-start")
+def game_start():
+    global player_x_id, player_o_id
 
-# SSE to send real-time game updates
+    if player_o_id:  # If Player O is connected, the game can start
+        return jsonify({"start_game": True})
+    else:
+        return jsonify({"start_game": False})
+    
 @app.route("/game-updates")
 def game_updates():
     user_id = session.get("user_id")
 
-    def event_stream():
-        if user_id not in sse_queues:
-            print("Käydäänkö me täällä????")
-            sse_queues[user_id] = queue.Queue()
+    # Ensure that the user's queue exists
+    if user_id not in sse_queues:
+        sse_queues[user_id] = queue.Queue()
 
-        while True:
-            try:
-                message = sse_queues[user_id].get(timeout=10)
-                yield f"data: {json.dumps(message)}\n\n"
-            except queue.Empty:
-                yield ": keep-alive\n\n"
-
-    return Response(event_stream(), content_type="text/event-stream")
+    # Attempt to retrieve the next game state
+    try:
+        message = sse_queues[user_id].get(timeout=10)
+        return jsonify(message)
+    except queue.Empty:
+        # Return empty response if there's no update
+        return jsonify({})
 
 
 # Function to check if a player has won
@@ -292,20 +314,26 @@ def join_waiting_room():
 
 @app.route('/sse')
 def sse():
+    print("Do we fail 1")
     user_id = session.get('user_id')
-
+    print("Do we fail 2")
     def event_stream():
+        print("Do we fail 3")
         # Continuously check for messages in the user's message queue
         while True:
+            
             if user_id in sse_queues:
+                print("Do we fail 4")
                 try:
                     # Get the next message from the user's queue
                     message = sse_queues[user_id].get(timeout=10)
                     yield f"data: {message}\n\n"
+                    print("Do we fail 6")
                 except queue.Empty:
+                    print("Do we fail 7")
                     # Keep the connection alive by sending a keep-alive message if no message
                     yield ": keep-alive\n\n"
-
+    print("Do we fail 5")
     # Return the event stream response for SSE
     return Response(event_stream(), content_type='text/event-stream')
 

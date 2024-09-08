@@ -22,15 +22,23 @@ function updateCountdown() {
 // Set the interval to call updateCountdown every 1000 milliseconds (1 second)
 const timerInterval = setInterval(updateCountdown, 1000);
 
-// SSE connection logic for waiting room
-// Open an SSE connection to /sse route
-const eventSource = new EventSource("/sse");
+// Polling function to check if game is starting
+function pollForGameStart() {
+  fetch("/game-start")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.start_game) {
+        window.location.href = "/tictac"; // Redirect to the game page when "start_game" message is received
+      } else {
+        // Poll again after a short delay
+        setTimeout(pollForGameStart, 1000); // Poll every 1 second
+      }
+    })
+    .catch((error) => {
+      console.error("Polling error:", error);
+      setTimeout(pollForGameStart, 5000); // Retry after 5 seconds on error
+    });
+}
 
-// Listen for messages from the server
-eventSource.onmessage = function (event) {
-  if (event.data === "start_game") {
-    eventSource.close();
-    // Redirect to the game page when "start_game" message is received
-    window.location.href = "/tictac";
-  }
-};
+// Start polling for the game start
+pollForGameStart();
